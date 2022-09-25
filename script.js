@@ -6,7 +6,8 @@ var model;
 
 async function getModel() {
     model = await tf.loadLayersModel(
-        "http://127.0.0.1:8887/model_1/model.json"
+        // "http://127.0.0.1:8887/model_1/model.json" // this loads from the dummy chrome web server
+        "https://raw.githubusercontent.com/bogdan-brz/python-to-browser-mnist-recog/master/model_1/model.json" // this loads from github
     );
     model.compile({
         optimizer: tf.train.adam(),
@@ -98,9 +99,9 @@ async function run() {
     const data = new MnistData();
     await data.load();
     const model = await getModel();
-    console.log(model);
-    tfvis.show.modelSummary({ name: "Model Architecture" }, model);
-    await train(model, data);
+    // console.log(model);
+    // tfvis.show.modelSummary({ name: "Model Architecture" }, model);
+    // await train(model, data);
     init();
     alert("Training is done, try classifying your handwriting!");
 }
