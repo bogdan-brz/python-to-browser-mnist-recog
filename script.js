@@ -1,8 +1,7 @@
-import { MnistData } from "./data.js";
-var canvas, ctx, saveButton, clearButton;
-var pos = { x: 0, y: 0 };
-var rawImage;
-var model;
+let canvas, ctx, saveButton, clearButton;
+let pos = { x: 0, y: 0 };
+let rawImage;
+let model;
 
 async function getModel() {
     model = await tf.loadLayersModel(
@@ -13,34 +12,6 @@ async function getModel() {
         optimizer: tf.train.adam(),
         loss: "categoricalCrossentropy",
         metrics: ["accuracy"],
-    });
-
-    return model;
-}
-
-async function train(model, data) {
-    const metrics = ["loss", "val_loss", "accuracy", "val_accuracy"];
-    const container = { name: "Model Training", styles: { height: "640px" } };
-    const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
-    const BATCH_SIZE = 512;
-    const TRAIN_DATA_SIZE = 1000;
-    const TEST_DATA_SIZE = 200;
-    const [trainXs, trainYs] = tf.tidy(() => {
-        const d = data.nextTrainBatch(TRAIN_DATA_SIZE);
-        return [d.xs.reshape([TRAIN_DATA_SIZE, 28, 28, 1]), d.labels];
-    });
-
-    const [testXs, testYs] = tf.tidy(() => {
-        const d = data.nextTestBatch(TEST_DATA_SIZE);
-        return [d.xs.reshape([TEST_DATA_SIZE, 28, 28, 1]), d.labels];
-    });
-
-    return model.fit(trainXs, trainYs, {
-        batchSize: BATCH_SIZE,
-        validationData: [testXs, testYs],
-        epochs: 20,
-        shuffle: true,
-        callbacks: fitCallbacks,
     });
 }
 
@@ -96,14 +67,8 @@ function init() {
 }
 
 async function run() {
-    const data = new MnistData();
-    await data.load();
-    const model = await getModel();
-    // console.log(model);
-    // tfvis.show.modelSummary({ name: "Model Architecture" }, model);
-    // await train(model, data);
+    await getModel();
     init();
-    alert("Training is done, try classifying your handwriting!");
 }
 
 document.addEventListener("DOMContentLoaded", run);
